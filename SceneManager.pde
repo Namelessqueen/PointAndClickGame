@@ -1,45 +1,40 @@
 import java.util.*;
-
-public class SceneManager extends StateManager
+public enum SceneName
 {
-  public Scene firstScene;
+  ChildhoodRoom
+}
+public class SceneManager extends StateManager<SceneName>
+{
   
-  Scene currentScene;
-  
-  public SceneManager()
+  public SceneManager(SceneName pEntryKey)
   {
-    //factory AKA place where we will make every Game Object
+    super(pEntryKey);
+     //States = Map.of(SceneName.ChildhoodRoom, new Scene());
 
-    firstScene = new Scene( this,
-    new ArrayList<GameObject>(List.of(
-      //backGround
-      new GameObject(new PVector(width/2,height/2), new Component[] { 
-        new ImageRenderer(Images.get("doorView.jpeg"))
-      }),
-      //player
-      new GameObject(new PVector(width/2,height/2), new Component[] { 
-        new ImageRenderer(Images.get("teddy.png")), 
-        new PlayerMovement(1/*speed*/)
-      }),
+    States = Map.of( 
+      //Scene 1 ===== CHILDHOOD ROOM =====
+      SceneName.ChildhoodRoom, new Scene(SceneName.ChildhoodRoom, this, 
+        new ArrayList<GameObject>(List.of(
+            //backGround
+          new GameObject(new PVector(width/2,height/2),new PVector(0.5f,0.5f),
+            new ImageRenderer(Images.get("bg1.png"))
+          ),
+          //player
+          new GameObject(new PVector(width/2,height/1.5f), new PVector(0.5f,0.5f),  
+            new ImageRenderer(null),
+            new PlayerMovement(2),
+            new AnimationController(AnimationName.ToddlerIdle)
+          ),
+          //Text Box
+          new GameObject(new Transform(new PVector(300,300), /*child of box*/ new GameObject(ZERO, new Text("Hello", 100))),  
+            new ImageRenderer(null)
+          )
+        ))
+      )    
+      //Scene 2 ===== BIRTHDAY PARTY =====
       
-      new GameObject(new PVector(width/2,height/2), new Component[] { 
-        new ImageRenderer(null), 
-        new PlayerMovement(1/*speed*/),
-        //new AnimationController();
-      })
-    )));
+    );
     
-    changeState(firstScene);
   }
-  public void changeState(State scene)
-  {
-    if(currentScene != null)
-      currentScene.onExit();
-    currentScene = (Scene)scene;
-    scene.onEnter();
-  }
-  public void updateState()
-  {
-    currentScene.update();
-  }
+
 }

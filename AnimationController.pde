@@ -1,23 +1,32 @@
-public class AnimationController extends StateManager//another state machine
+public enum AnimationName
 {
-  public Animation BoomAnimation;
-  
-  Animation _currentAnimation;
+    ToddlerWalk,
+    ToddlerIdle
+}
+
+public class AnimationController extends StateManager<AnimationName>//another state machine
+{  
+  //context variables
   public ImageRenderer ImageRenderer;
-  public AnimationController()
+  public boolean IsWalking;
+  
+  
+  public AnimationController(AnimationName pEntryState)
   {
-    BoomAnimation = new Animation(this, );
+    super(pEntryState);
+
+    States = Map.of(
+      AnimationName.ToddlerWalk, new WalkingAnimation(AnimationName.ToddlerWalk,this, SpriteSheets.get("toddlerWalk_6_1_ss.png"), true, 6),
+      AnimationName.ToddlerIdle, new IdleAnimation(AnimationName.ToddlerIdle, this, SpriteSheets.get("toddlerWalk_6_1_ss.png"), true, 6, Images.get("toddlerStanding.png"))
+    );
+    
   }
   @Override
-  public void updateState()
+  void onAdd()
   {
-    _currentAnimation.update();
+    ImageRenderer = GameObject.GetComponent(ImageRenderer.class);
+
+    super.onAdd();
   }
-  @Override void changeState(State pAnimation)
-  {
-    if(_currentAnimation != null)
-      _currentAnimation.onExit();
-    _currentAnimation = (Animation)pAnimation;
-    _currentAnimation.onEnter();
-  }
+
 }
